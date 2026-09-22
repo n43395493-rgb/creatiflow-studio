@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suno Downloader - Unduh Lagu Suno AI (MP3 320k, WAV 24-bit, FLAC, Workspace & Batch)</title>
+  <meta name="description" content="Website pengunduh lagu Suno AI gratis. Unduh MP3 320k, WAV 24-bit studio, FLAC Hi-Res, cover HD, lirik, download batch multi-link, serta jelajahi workspace & folder akun Suno.">
+  
+  <!-- OpenGraph Meta Tags -->
+  <meta property="og:title" content="Suno Downloader - MP3 320k, WAV 24-bit, FLAC, Multi-Link & Workspace Explorer">
+  <meta property="og:description" content="Download musik Suno AI dengan format audio jernih (WAV 24-bit, FLAC, MP3 320k), dukung download banyak link sekaligus, dan explorer folder akun Suno.">
+  <meta property="og:type" content="website">
+
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=3.3">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="app-container">
+    <!-- Header Navigation -->
+    <header class="header">
+      <a href="./" class="brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>SuDownloader</h1>
+          <span>Suno AI Song & Workspace Studio</span>
+        </div>
+      </a>
+      <!-- Desktop header links (hidden on mobile) -->
+      <div class="header-links" id="desktopHeaderLinks">
+        <button id="openStatsModalBtn" class="btn-ghost" onclick="if(window.openStatsModal)window.openStatsModal(event);" title="Cek Total Download &amp; Statistik">
+          <span>📊 Total Download <span id="headerStatsBadge" class="stats-counter-badge">0</span></span>
+        </button>
+        <button id="openMasteringHeaderBtn" class="btn-ghost" onclick="if(window.openMasteringStudio)window.openMasteringStudio(event);" title="Buka Audio Mastering Studio & Equalizer">
+          <span>🎛️ Mastering Studio <span id="headerMasteringDot" class="mastering-led-dot"></span></span>
+        </button>
+        <button id="openGuideBtn" class="btn-ghost" title="Panduan Link Suno yang Benar">
+          <span>💡 Panduan Link</span>
+        </button>
+        <button id="openCookieGuideBtn" class="btn-ghost" title="Panduan Ambil Cookie Suno">
+          <span>🔑 Panduan Cookie</span>
+        </button>
+        <button id="toggleHistoryBtn" class="btn-ghost" title="Lihat Riwayat Download">
+          <span>🕒 Riwayat</span>
+        </button>
+      </div>
+      <!-- Hamburger Button (visible only on mobile) -->
+      <button id="mobileMenuBtn" class="hamburger-btn" aria-label="Menu" aria-expanded="false">
+        <span class="ham-bar"></span>
+        <span class="ham-bar"></span>
+        <span class="ham-bar"></span>
+      </button>
+    </header>
+
+    <!-- Mobile Drawer (hidden on desktop) -->
+    <div id="mobileDrawer" class="mobile-drawer" aria-hidden="true">
+      <!-- Mode Navigation inside drawer -->
+      <div class="drawer-section-label">Mode</div>
+      <div class="drawer-tabs">
+        <button id="mobileNavSingleTab" class="drawer-tab-btn active" data-mode="single">
+          <span class="drawer-tab-icon">🎯</span>
+          <span>Single Link</span>
+        </button>
+        <button id="mobileNavBatchTab" class="drawer-tab-btn" data-mode="batch">
+          <span class="drawer-tab-icon">📦</span>
+          <span>Batch Multi-Link</span>
+        </button>
+        <button id="mobileNavWorkspaceTab" class="drawer-tab-btn" data-mode="workspace">
+          <span class="drawer-tab-icon">🗂️</span>
+          <span>Workspace & Folders</span>
+        </button>
+      </div>
+      <div class="drawer-divider"></div>
+      <!-- Header actions inside drawer -->
+      <div class="drawer-section-label">Fitur</div>
+      <div class="drawer-actions">
+        <button class="drawer-action-btn" onclick="closeMobileDrawer();if(window.openStatsModal)window.openStatsModal(event);">
+          <span>📊</span> Total Download <span id="mobileStatsBadge" class="stats-counter-badge">0</span>
+        </button>
+        <button class="drawer-action-btn" onclick="closeMobileDrawer();if(window.openMasteringStudio)window.openMasteringStudio(event);">
+          <span>🎛️</span> Mastering Studio
+        </button>
+        <button id="mobileOpenGuideBtn" class="drawer-action-btn">
+          <span>💡</span> Panduan Link
+        </button>
+        <button id="mobileOpenCookieGuideBtn" class="drawer-action-btn">
+          <span>🔑</span> Panduan Cookie
+        </button>
+        <button id="mobileToggleHistoryBtn" class="drawer-action-btn">
+          <span>🕒</span> Riwayat Download
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Drawer Backdrop -->
+    <div id="mobileDrawerBackdrop" class="mobile-drawer-backdrop" onclick="closeMobileDrawer()"></div>
+
+    <!-- Navigation Modes Tabs (desktop only) -->
+    <nav class="mode-navigation-bar" id="desktopNavBar">
+      <button id="navSingleTab" class="nav-tab-btn active" data-mode="single">
+        <span class="nav-tab-icon">🎯</span>
+        <span class="nav-tab-label">Single Link</span>
+      </button>
+      <button id="navBatchTab" class="nav-tab-btn" data-mode="batch">
+        <span class="nav-tab-icon">📦</span>
+        <span class="nav-tab-label">Batch Multi-Link</span>
+        <span class="nav-tab-badge">Banyak URL</span>
+      </button>
+      <button id="navWorkspaceTab" class="nav-tab-btn" data-mode="workspace">
+        <span class="nav-tab-icon">🗂️</span>
+        <span class="nav-tab-label">Workspace & Folders</span>
+        <span class="nav-tab-badge" style="background: rgba(168, 85, 247, 0.25); color: #c084fc;">Akun Suno</span>
+      </button>
+    </nav>
+
+    <!-- ==================== 1. MODE: SINGLE LINK ==================== -->
+    <div id="singleLinkSection" class="mode-container active">
+
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="badge-pill">
+          <span>✨ Studio Grade Audio</span>
+          <span>•</span>
+          <span>WAV 24-Bit &bull; FLAC &bull; MP3 320k &bull; MP4 Klip</span>
+        </div>
+        <h2>Download Musik Suno AI <span class="gradient-text">Kualitas Master</span></h2>
+        <p>Ekstrak audio master jernih tanpa kompresi rusak, download WAV 24-bit, FLAC lossless, artwork cover HD, dan lirik lengkap secara instan.</p>
+      </section>
+
+      <!-- Search / Input Card -->
+      <section class="search-card">
+        <div class="search-input-row">
+          <div class="search-icon">🔗</div>
+          <input 
+            type="text" 
+            id="sunoUrlInput" 
+            class="search-input" 
+            placeholder="Tempel link lagu Suno (contoh: https://suno.com/song/... atau /s/...)" 
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="pasteBtn" class="btn-paste" title="Tempel dari Clipboard">
+            📋 Tempel
+          </button>
+          <button id="fetchBtn" class="btn-primary">
+            <span>Ambil Lagu</span>
+            <span>➜</span>
+          </button>
+        </div>
+
+        <!-- Quick Link Demos -->
+        <div class="search-quick-links">
+          <span>Coba contoh:</span>
+          <button class="quick-link-tag" data-url="https://suno.com/song/97b329dd-d468-4266-bb55-b8ccc95124df">
+            🎵 Aira Music - Meski kau jauh disana
+          </button>
+          <button class="quick-link-tag" data-url="https://suno.com/song/c8acea1e-e88e-4e2e-a542-a0ad4e9d905a">
+            🎸 Indonesian Rock - Kau Pergi Saat Sayang Sayangnya
+          </button>
+        </div>
+      </section>
+
+      <!-- Loading Skeleton State -->
+      <div id="loadingState" class="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-title">Mengambil Metadata &amp; Dekripsi Audio Suno...</div>
+        <div class="loading-desc">Mendekripsi audio master stream, artwork cover resolusi tinggi, dan lirik lagu terkait...</div>
+      </div>
+
+      <!-- Main Results Section -->
+      <main id="resultSection" class="result-section">
+        <div class="track-main-card">
+          <div class="track-grid">
+            <!-- Left: Cover Artwork presentation -->
+            <div class="cover-column">
+              <div id="coverWrapper" class="cover-wrapper" title="Klik untuk perbesar cover">
+                <span id="modelBadge" class="cover-badge">v5.5</span>
+                <img id="coverImg" class="cover-image" src="" alt="Cover Artwork">
+                <div class="cover-overlay">
+                  <span>🔍 Lihat HD</span>
+                </div>
+              </div>
+              <button id="downloadCoverBtn" class="btn-cover-download">
+                <span>🖼️ Download Cover HD (PNG)</span>
+              </button>
+            </div>
+
+            <!-- Right: Details, Player & Download formats -->
+            <div class="details-column">
+              <div class="track-meta-header">
+                <h2 id="trackTitle" class="track-title">Judul Lagu</h2>
+                <div class="track-author-row">
+                  <div class="author-pill">
+                    <img id="authorAvatar" class="author-avatar" src="" alt="Creator" onerror="this.src='https://cdn1.suno.ai/defaultBlue.webp'">
+                    <span id="authorName">Aira Music</span>
+                  </div>
+                  <span>•</span>
+                  <span id="trackDuration">⏱️ 05:53</span>
+                  <span>•</span>
+                  <span id="trackDate">📅 Baru</span>
+                </div>
+                <div id="trackTags" class="track-tags"></div>
+              </div>
+
+              <!-- Built-in Audio Player -->
+              <div class="player-container">
+                <div class="player-controls-row">
+                  <button id="playPauseBtn" class="btn-play-pause" title="Putar / Jeda Audio">
+                    ▶
+                  </button>
+                  <div id="waveformBox" class="waveform-box" title="Klik untuk melompati waktu">
+                    <canvas id="waveformCanvas"></canvas>
+                  </div>
+                </div>
+                <div class="time-row">
+                  <span id="currentTime">00:00</span>
+                  <div class="volume-control">
+                    <span>🔊</span>
+                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.05" value="0.9">
+                  </div>
+                  <span id="totalTime">00:00</span>
+                </div>
+                <audio id="audioPlayer" preload="none" crossorigin="anonymous"></audio>
+              </div>
+
+              <!-- Download Format Hub -->
+              <div class="download-hub">
+                <div class="download-hub-label">
+                  <span>PILIH FORMAT AUDIO MASTER</span>
+                  <span style="font-size: 11px; color: var(--accent-cyan); font-weight: normal;">✓ Siap Diunduh</span>
+                </div>
+                <div class="download-buttons-grid">
+                  <!-- MP3 320k -->
+                  <button id="dlMp3Btn" class="btn-download-format format-mp3" title="Unduh format MP3 High Quality 320 kbps">
+                    <span class="format-badge">MP3</span>
+                    <span class="format-desc">320 kbps HQ</span>
+                  </button>
+
+                  <!-- WAV 24-Bit Studio -->
+                  <button id="dlWavBtn" class="btn-download-format format-wav" title="Unduh Master 24-bit 48kHz PCM WAV">
+                    <span class="format-badge">WAV 24-Bit</span>
+                    <span class="format-desc">Studio Master</span>
+                  </button>
+
+                  <!-- FLAC Lossless Hi-Res -->
+                  <button id="dlFlacBtn" class="btn-download-format format-flac" title="Unduh FLAC Lossless Hi-Res">
+                    <span class="format-badge">FLAC</span>
+                    <span class="format-desc">Lossless Hi-Res</span>
+                  </button>
+
+                  <!-- M4A Original Stream -->
+                  <button id="dlM4aBtn" class="btn-download-format format-m4a" title="Unduh format asli M4A / Opus">
+                    <span class="format-badge">M4A</span>
+                    <span class="format-desc">Original Master</span>
+                  </button>
+
+                  <!-- MP4 Video -->
+                  <button id="dlMp4Btn" class="btn-download-format format-mp4" title="Unduh Video Klip MP4 Resmi Suno">
+                    <span class="format-badge">MP4</span>
+                    <span class="format-desc">Video Visual</span>
+                  </button>
+                </div>
+
+                <!-- All-in-One ZIP Package -->
+                <button id="dlZipBtn" class="btn-download-all-zip" title="Unduh Paket Lengkap (Audio, Cover HD, & Lirik .txt)">
+                  <span>📦 Download Paket Lengkap (.ZIP)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs: Lyrics & Technical Info -->
+        <div class="track-tabs-card">
+          <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="lyricsTab">
+              <span>📝 Lirik Terkait</span>
+            </button>
+            <button class="tab-btn" data-tab="infoTab">
+              <span>ℹ️ Informasi Teknis</span>
+            </button>
+          </div>
+
+          <!-- Tab 1: Lyrics -->
+          <div id="lyricsTab" class="tab-pane active">
+            <div class="lyrics-header-actions">
+              <span style="font-size: 13px; color: var(--text-muted);">
+                Lirik resmi hasil generate AI Suno:
+              </span>
+              <div class="lyrics-actions-group">
+                <button id="copyLyricsBtn" class="btn-small">
+                  <span>📋 Salin Lirik</span>
+                </button>
+                <button id="downloadLyricsTxtBtn" class="btn-small">
+                  <span>💾 Unduh (.TXT)</span>
+                </button>
+                <button id="downloadLyricsLrcBtn" class="btn-small">
+                  <span>⏱️ Unduh (.LRC)</span>
+                </button>
+              </div>
+            </div>
+            <div id="lyricsContent" class="lyrics-body"></div>
+          </div>
+
+          <!-- Tab 2: Technical Info -->
+          <div id="infoTab" class="tab-pane">
+            <table class="info-table">
+              <tbody>
+                <tr>
+                  <td>Track UUID / Clip ID</td>
+                  <td id="infoClipId">-</td>
+                </tr>
+                <tr>
+                  <td>Model AI Suno</td>
+                  <td id="infoModel">-</td>
+                </tr>
+                <tr>
+                  <td>Prompt Gaya Musik</td>
+                  <td id="infoPrompt" style="font-family: var(--font-body);">-</td>
+                </tr>
+                <tr>
+                  <td>Audio Stream Asli</td>
+                  <td id="infoAudioStream">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div><!-- /singleLinkSection -->
+
+    <!-- ==================== 2. MODE: BATCH MULTI-LINK ==================== -->
+    <div id="batchSection" class="mode-container">
+      <section class="hero">
+        <div class="badge-pill">
+          <span>📦 Multi-URL Bulk Downloader</span>
+          <span>•</span>
+          <span>Sekali Tempel Banyak Lagu</span>
+        </div>
+        <h2>Download Sekaligus <span class="gradient-text">Banyak Link Suno</span></h2>
+        <p>Tempel beberapa link lagu Suno AI sekaligus (1 baris per link). Sistem akan mengambil seluruh data lagu, status audio, dan memungkinkan Anda mengunduh per lagu atau download sekaligus dalam 1 arsip ZIP.</p>
+      </section>
+
+      <section class="batch-card">
+        <div class="batch-header-row">
+          <label for="batchUrlsInput" class="batch-label">
+            <span>Daftar URL Suno (1 URL per baris):</span>
+            <span id="batchCountLabel" class="batch-count-badge">0 baris terdeteksi</span>
+          </label>
+          <div class="batch-top-actions">
+            <button id="batchPasteBtn" class="btn-small">📋 Tempel Clipboard</button>
+            <button id="batchDemoBtn" class="btn-small">💡 Isi Contoh Link</button>
+            <button id="batchClearBtn" class="btn-small" style="color: var(--accent-red);">🗑️ Bersihkan</button>
+          </div>
+        </div>
+
+        <textarea 
+          id="batchUrlsInput" 
+          class="batch-textarea" 
+          rows="6" 
+          placeholder="https://suno.com/song/97b329dd-d468-4266-bb55-b8ccc95124df&#10;https://suno.com/song/c8acea1e-e88e-4e2e-a542-a0ad4e9d905a&#10;https://suno.com/s/cljoqau99OIolcyV"
+        ></textarea>
+
+        <div class="batch-control-actions">
+          <button id="batchFetchBtn" class="btn-primary">
+            <span>🚀 Ambil Semua Lagu (Fetch Batch)</span>
+          </button>
+          <button id="batchDownloadAllZipBtn" class="btn-download-all-zip" style="margin-top: 0; display: none;">
+            <span>📦 Download Semua Lagu (.ZIP)</span>
+          </button>
+        </div>
+
+        <!-- Batch Progress Bar -->
+        <div id="batchProgressBarBox" class="batch-progress-box" style="display: none;">
+          <div class="batch-progress-info">
+            <span id="batchProgressStatus">Memproses antrean link...</span>
+            <span id="batchProgressPercent">0%</span>
+          </div>
+          <div class="batch-progress-bar">
+            <div id="batchProgressFill" class="batch-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Batch Results Container -->
+      <section id="batchResultsSection" class="batch-results-section" style="display: none;">
+        <div class="batch-results-header">
+          <h3>Daftar Lagu Terambil (<span id="batchResultsCount">0</span>)</h3>
+          <div class="batch-filter-actions">
+            <span style="font-size: 12px; color: var(--text-muted);">Format download cepat per lagu:</span>
+          </div>
+        </div>
+        <div id="batchItemsList" class="batch-items-grid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================== 3. MODE: SUNO WORKSPACE & FOLDER EXPLORER ==================== -->
+    <div id="workspaceSection" class="mode-container">
+      <section class="hero">
+        <div class="badge-pill" style="border-color: rgba(168, 85, 247, 0.4);">
+          <span>🗂️ Suno Library & Workspace Explorer</span>
+          <span>•</span>
+          <span>Akses Folder Akun Anda</span>
+        </div>
+        <h2>Jelajahi & Unduh Seluruh <span class="gradient-text" style="background: linear-gradient(135deg, #c084fc 0%, #38bdf8 100%); -webkit-background-clip: text;">Folder Suno AI</span></h2>
+        <p>Hubungkan dengan Cookie atau Token akun Suno Anda. Anda dapat melihat semua Folder Proyek, Playlist, dan Library lagu, mengecek lirik/detail, serta mendownload isi folder ke file ZIP.</p>
+      </section>
+
+      <!-- Auth / Cookie Card with 1-Click Auto-Connect -->
+      <section class="workspace-auth-card">
+        <!-- 1-Click Instant Auto-Connect Banner -->
+        <div class="auto-connect-banner">
+          <div class="auto-connect-info">
+            <div class="auto-connect-title">
+              <span class="pulse-icon">⚡</span>
+              <h4>Konek Otomatis Tanpa Copy-Paste</h4>
+              <span id="extStatusBadge" class="ext-status-badge">Mendeteksi Ekstensi...</span>
+            </div>
+            <p class="auto-connect-subtitle">
+              Cukup pastikan akun Suno Anda sudah login di tab lain (<code>suno.com</code>). Klik tombol di bawah atau cukup <strong>refresh halaman</strong>, SuDownloader akan otomatis tersambung!
+            </p>
+          </div>
+          <button id="autoConnectBtn" class="btn-auto-connect" title="Ambil sesi Suno langsung dari tab yang sedang aktif">
+            <span>⚡ Konek Otomatis (1-Klik)</span>
+          </button>
+        </div>
+
+        <!-- Collapsible Toggle Header for Manual Cookie Input -->
+        <div class="manual-cookie-toggle-container">
+          <button id="toggleManualCookieBtn" type="button" class="manual-cookie-toggle-btn" aria-expanded="false" title="Klik untuk menampilkan / menyembunyikan input cookie cadangan">
+            <div class="toggle-btn-left">
+              <span class="toggle-icon">🔑</span>
+              <div class="toggle-text-wrap">
+                <span class="toggle-label">Input Cookie / Token Cadangan (Manual)</span>
+                <span class="toggle-sublabel">Gunakan jika tidak memakai ekstensi browser atau sesi perlu di-override</span>
+              </div>
+            </div>
+            <div class="toggle-btn-right">
+              <span id="manualCookieSavedBadge" class="manual-cookie-badge" style="display: none;">Tersimpan ✓</span>
+              <span id="toggleManualCookieText" class="toggle-badge-action">▼ Tampilkan Form Cookie</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Collapsible Manual Cookie Content (Default: Hidden) -->
+        <div id="manualCookieSection" class="manual-cookie-section" style="display: none;">
+          <div class="auth-card-header" style="margin-bottom: 10px;">
+            <div class="auth-title-group">
+              <span style="font-size: 18px;">📋</span>
+              <div>
+                <h3 style="font-size: 13px;">Tempel String Cookie atau Bearer Token</h3>
+                <p>Mendukung JSON ekstensi Cookie-Editor, Header Cookie, __session, atau Bearer JWT.</p>
+              </div>
+            </div>
+            <button id="openCookieGuideBtn2" class="btn-small" style="color: var(--accent-cyan); border-color: rgba(56, 189, 248, 0.3);">
+              📖 Panduan Ambil Cookie
+            </button>
+          </div>
+
+          <div class="auth-input-group" style="align-items: flex-start; padding: 10px;">
+            <textarea 
+              id="sunoCookieInput" 
+              class="auth-input" 
+              rows="2"
+              placeholder="Tempel Cookie / Token Suno di sini (mendukung export JSON ekstensi Cookie-Editor, Cookie String, __session, __client, atau Bearer token...)"
+              autocomplete="off"
+              spellcheck="false"
+              style="resize: vertical; min-height: 50px; line-height: 1.5;"
+            ></textarea>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <button id="pasteCookieBtn" class="btn-small" title="Tempel dari Clipboard" style="white-space: nowrap;">
+                📋 Tempel
+              </button>
+              <button id="toggleCookieVisibilityBtn" class="btn-ghost" style="padding: 6px 10px;" title="Lihat/Sembunyikan Cookie">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-footer-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="saveCookieCheckbox" checked>
+              <span>Simpan di browser ini & server lokal agar otomatis tersambung saat refresh</span>
+            </label>
+            <div class="auth-btns">
+              <button id="clearCookieBtn" class="btn-small" style="color: var(--accent-red); display: none;">
+                Hapus Sesi
+              </button>
+              <button id="fetchWorkspaceBtn" class="btn-primary">
+                <span>🔗 Buka Workspace</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Loading Workspace -->
+      <div id="workspaceLoadingState" class="loading-state" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-title">Mengambil Folder & Data Akun Suno...</div>
+        <div class="loading-desc">Membaca daftar Proyek, Folder, dan Playlist dari studio-api.prod.suno.com...</div>
+      </div>
+
+      <!-- Workspace Explorer View (Dual-Pane) -->
+      <section id="workspaceView" class="workspace-view" style="display: none;">
+        <!-- Mobile-only Workspace Tab Bar -->
+        <div class="ws-mobile-tabs" id="wsMobileTabs">
+          <button class="ws-mobile-tab active" id="wsTabBtnFolders" data-ws-tab="folders">
+            <span>📁</span> Koleksi &amp; Folder
+          </button>
+          <button class="ws-mobile-tab" id="wsTabBtnFeed" data-ws-tab="feed">
+            <span>🎵</span> Feed Utama
+          </button>
+        </div>
+
+        <!-- Left Sidebar: Folder & Collections Tree -->
+        <aside class="workspace-sidebar" id="wsPanelFolders">
+          <div class="sidebar-header">
+            <h4>📁 Koleksi &amp; Folder</h4>
+            <button id="refreshWorkspaceBtn" class="btn-ghost" title="Muat Ulang" style="padding: 4px 8px; font-size: 13px;">🔄</button>
+          </div>
+          <div id="workspaceFoldersList" class="workspace-folders-list">
+            <!-- Populated by JS -->
+          </div>
+        </aside>
+
+        <!-- Right Content: Folder Clips & Details -->
+        <main class="workspace-content" id="wsPanelFeed">
+
+          <!-- Mobile-only: Folder breadcrumb label (shows current folder name) -->
+          <div class="ws-feed-folder-label" id="wsFeedFolderLabel" style="display:none;">
+            <button class="ws-back-btn" onclick="if(window.switchWsTab)window.switchWsTab('folders');" title="Kembali ke Koleksi">
+              ← Koleksi
+            </button>
+            <span class="ws-feed-folder-name" id="wsFeedFolderName">📁 Feed Utama</span>
+          </div>
+
+          <div class="folder-header-bar">
+            <div class="folder-title-box">
+              <h3 id="currentFolderTitle">Feed Utama (Semua Lagu)</h3>
+              <span id="currentFolderCount" class="folder-count-badge">0 lagu</span>
+            </div>
+            <div class="folder-actions-box">
+              <input type="text" id="folderSearchInput" class="folder-search-input" placeholder="🔍 Cari lagu di folder ini...">
+              <button id="downloadFolderZipBtn" class="btn-download-all-zip" style="margin-top: 0; padding: 10px 16px; font-size: 13px;">
+                <span>📦 Download 1 Folder (.ZIP)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Clips Grid in Folder -->
+          <div id="folderClipsList" class="folder-clips-grid">
+            <!-- Populated by JS -->
+          </div>
+        </main>
+
+        <!-- Side Detail Frame: Song Details & Actions without leaving list -->
+        <aside id="workspaceDetailPane" class="workspace-detail-pane" style="display: none;">
+          <div class="detail-pane-header">
+            <div class="detail-pane-title-group">
+              <span class="detail-pane-badge">🎵 DETAIL LAGU</span>
+              <h4 id="wsDetailTitle" class="detail-pane-title">Judul Lagu</h4>
+            </div>
+            <button id="closeWsDetailBtn" class="detail-pane-close-btn" title="Tutup Detail (Esc)">✕</button>
+          </div>
+
+          <div class="detail-pane-scrollable">
+            <!-- Cover Artwork with Model Badge -->
+            <div class="detail-cover-box">
+              <img id="wsDetailCover" class="detail-cover-img" src="" alt="Cover" onerror="this.src='https://cdn1.suno.ai/defaultBlue.webp'">
+              <div id="wsDetailModel" class="detail-model-tag">v5.5</div>
+              <button id="wsZoomCoverBtn" class="detail-zoom-btn" title="Perbesar Cover">🔍 Zoom</button>
+            </div>
+
+            <!-- Artist & Meta Info -->
+            <div class="detail-meta-group">
+              <div class="detail-artist-row">
+                <span class="detail-artist-label">Creator:</span>
+                <span id="wsDetailArtist" class="detail-artist-name">👤 Nama Artis</span>
+              </div>
+              <div class="detail-sub-meta">
+                <span id="wsDetailDuration">⏱️ 03:00</span>
+                <span>&bull;</span>
+                <span id="wsDetailDate">📅 Baru</span>
+              </div>
+              <div id="wsDetailTags" class="detail-tags-box"></div>
+            </div>
+
+            <!-- Embedded Audio Player inside Side Frame -->
+            <div class="detail-player-card">
+              <div class="detail-player-controls">
+                <button id="wsPlayPauseBtn" class="btn-detail-play" title="Putar / Jeda">▶</button>
+                <div class="detail-player-track">
+                  <div class="detail-time-row">
+                    <span id="wsCurrentTime">00:00</span>
+                    <span id="wsTotalTime">00:00</span>
+                  </div>
+                  <input type="range" id="wsSeekSlider" class="detail-seek-slider" min="0" max="100" value="0">
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Download Hub -->
+            <div class="detail-download-section">
+              <div class="detail-section-label">UNDUH AUDIO & VIDEO</div>
+              <div class="detail-dl-grid">
+                <button id="wsDlMp3Btn" class="btn-detail-dl dl-mp3" title="Unduh MP3 HQ 320 kbps">
+                  <span class="dl-fmt">MP3</span>
+                  <span class="dl-rate">320k HQ</span>
+                </button>
+                <button id="wsDlWavBtn" class="btn-detail-dl dl-wav" title="Unduh WAV 24-Bit Studio">
+                  <span class="dl-fmt">WAV</span>
+                  <span class="dl-rate">24-Bit Studio</span>
+                </button>
+                <button id="wsDlFlacBtn" class="btn-detail-dl dl-flac" title="Unduh FLAC Lossless Hi-Res">
+                  <span class="dl-fmt">FLAC</span>
+                  <span class="dl-rate">Lossless</span>
+                </button>
+                <button id="wsDlM4aBtn" class="btn-detail-dl dl-m4a" title="Unduh M4A Original">
+                  <span class="dl-fmt">M4A</span>
+                  <span class="dl-rate">Original</span>
+                </button>
+                <button id="wsDlMp4Btn" class="btn-detail-dl dl-mp4" title="Unduh Video MP4 Suno">
+                  <span class="dl-fmt">MP4</span>
+                  <span class="dl-rate">Video Klip</span>
+                </button>
+                <button id="wsDlZipBtn" class="btn-detail-dl dl-zip" title="Unduh Lengkap ZIP (Audio + Cover + Lirik)">
+                  <span class="dl-fmt">📦 ZIP</span>
+                  <span class="dl-rate">Paket Lengkap</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lyrics Pane -->
+            <div class="detail-lyrics-section">
+              <div class="detail-lyrics-header">
+                <span class="detail-section-label">📝 LIRIK LAGU</span>
+                <div class="detail-lyrics-actions">
+                  <button id="wsCopyLyricsBtn" class="btn-mini">📋 Salin</button>
+                  <button id="wsDownloadLyricsBtn" class="btn-mini">💾 .TXT</button>
+                </div>
+              </div>
+              <div id="wsDetailLyrics" class="detail-lyrics-content"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <!-- History Card (Available on all tabs) -->
+    <section id="historySection" class="history-card" style="display: none;">
+      <div class="history-header">
+        <h3>🕒 Riwayat Download Terbaru</h3>
+        <button id="clearHistoryBtn" class="btn-small" style="color: var(--accent-red);">
+          Hapus Riwayat
+        </button>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>SuDownloader &bull; Dibuat khusus untuk pengunduhan instan lagu Suno AI.</p>
+      <p style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">
+        Didukung oleh FFmpeg (FLAC Lossless, WAV 24-bit Studio, MP3 320k) &bull; 100% aman diproses di lingkungan lokal.
+      </p>
+    </footer>
+  </div>
+
+  <!-- Modal Lightbox for Cover Artwork -->
+  <div id="coverModal" class="modal-backdrop">
+    <div class="modal-content">
+      <button id="closeCoverModalBtn" class="modal-close-btn" title="Tutup">✕</button>
+      <img id="modalCoverImg" class="modal-img" src="" alt="Cover Fullscreen">
+    </div>
+  </div>
+
+  <!-- Modal Guide for Valid Suno Song Links -->
+  <div id="guideModal" class="modal-backdrop">
+    <div class="modal-content modal-card">
+      <button id="closeGuideModalBtn" class="modal-close-btn" title="Tutup">✕</button>
+      <div class="modal-guide-body">
+        <div class="guide-header">
+          <span style="font-size: 28px;">💡</span>
+          <div>
+            <h3>Panduan Format Link Suno AI</h3>
+            <p>Mendukung link share pendek (/s/...) maupun link lagu langsung (/song/...).</p>
+          </div>
+        </div>
+
+        <div class="guide-box guide-box-success">
+          <div class="guide-badge-success">✅ Format Terbaik: Link Lagu Langsung (/song/...)</div>
+          <code>https://suno.com/song/c8acea1e-e88e-4e2e-a542-a0ad4e9d905a</code>
+          <p>Link ini adalah tautan langsung dengan ID unik 36 karakter (UUID). Paling stabil dan 100% selalu berhasil diekstrak audio, cover HD, dan liriknya.</p>
+        </div>
+
+        <div class="guide-box" style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3);">
+          <div style="color: #38bdf8; font-weight: 700; font-size: 13px; margin-bottom: 8px;">🔗 Tautan Share Pendek (/s/...)</div>
+          <code>https://suno.com/s/cljoqau99OIolcyV</code>
+          <p style="color: #cbd5e1; font-size: 12px; line-height: 1.5; margin: 0;">Link ini didapat dari tombol <em>Share</em> di aplikasi/web Suno. SuDownloader akan otomatis menelusuri link ini ke UUID lagu.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Guide for Suno Cookie -->
+  <div id="cookieGuideModal" class="modal-backdrop">
+    <div class="modal-content modal-card">
+      <button id="closeCookieGuideModalBtn" class="modal-close-btn" title="Tutup">✕</button>
+      <div class="modal-guide-body">
+        <div class="guide-header">
+          <span style="font-size: 28px;">🔑</span>
+          <div>
+            <h3>Cara Mengambil Cookie / Token Sesi Akun Suno</h3>
+            <p>Ikuti langkah mudah ini untuk mengizinkan SuDownloader membaca folder & playlist akun Anda:</p>
+          </div>
+        </div>
+
+        <div class="guide-steps">
+          <div style="margin-bottom: 12px; font-weight: 700; color: #fff;">Pilih salah satu metode termudah:</div>
+
+          <div class="guide-box" style="margin-bottom: 12px; background: linear-gradient(135deg, rgba(0, 242, 254, 0.12), rgba(168, 85, 247, 0.12)); border: 1px solid rgba(0, 242, 254, 0.4);">
+            <div style="color: #00f2fe; font-weight: 800; font-size: 13px; margin-bottom: 6px;">⚡ Metode 0 (Paling Mudah): Gunakan Ekstensi Khusus "SuDownloader Connect"</div>
+            <p style="color: #cbd5e1; font-size: 12px; line-height: 1.5; margin-bottom: 6px;">
+              Ekstensi khusus ini <strong>100% bersih & ringan tanpa tombol tambahan</strong> di halaman Suno:
+            </p>
+            <ol style="margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 12px; line-height: 1.6;">
+              <li>Buka <code>chrome://extensions/</code> di browser & aktifkan <strong>Developer mode</strong>.</li>
+              <li>Klik <strong>Load unpacked</strong> & pilih folder: <code>e:\Xampp\htdocs\sudownloader_connect_extension</code>.</li>
+              <li>Buka tab Suno (suno.com) dan pastikan sudah login.</li>
+              <li>Buka atau refresh SuDownloader — <strong>otomatis tersambung instan!</strong></li>
+            </ol>
+          </div>
+
+          <div class="guide-box" style="margin-bottom: 12px; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.3);">
+            <div style="color: #c084fc; font-weight: 700; font-size: 13px; margin-bottom: 6px;">📋 Metode 1: Lewat Ekstensi Cookie-Editor (Manual)</div>
+            <ol style="margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 12px; line-height: 1.6;">
+              <li>Buka <a href="https://suno.com" target="_blank" style="color: var(--accent-cyan);">https://suno.com</a> (pastikan sudah login).</li>
+              <li>Klik icon ekstensi <strong>Cookie-Editor</strong> di toolbar browser Anda.</li>
+              <li>Klik tombol <strong>Export</strong> (bisa pilih format <strong>JSON</strong> atau <strong>Header String</strong>).</li>
+              <li>Langsung klik tombol <strong>📋 Tempel</strong> di SuDownloader. Sistem otomatis membaca JSON maupun string cookie dan menukar tokennya ke Clerk!</li>
+            </ol>
+          </div>
+
+          <div class="guide-box" style="margin-bottom: 12px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3);">
+            <div style="color: #38bdf8; font-weight: 700; font-size: 13px; margin-bottom: 6px;">🎯 Metode 2: Lewat DevTools Tab Network (100% Pasti Berhasil)</div>
+            <ol style="margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 12px; line-height: 1.6;">
+              <li>Di halaman <strong>suno.com</strong>, tekan tombol <code>F12</code> &gt; klik tab <strong>Network</strong>.</li>
+              <li>Refresh halaman atau klik salah satu playlist/lagu di Suno.</li>
+              <li>Di kolom pencarian Network, ketik <code>studio-api</code> atau <code>feed</code> atau <code>client</code>.</li>
+              <li>Klik salah satu request di daftar, lalu di tab sebelah kanan (<strong>Headers</strong>), cari baris <strong>Authorization:</strong> (format: <code>Bearer eyJ...</code>) ATAU baris <strong>Cookie:</strong>.</li>
+              <li>Copy seluruh nilainya dan tempel ke kolom SuDownloader!</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="guide-box" style="margin-top: 14px; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3);">
+          <div style="color: #4ade80; font-weight: 700; font-size: 13px;">🔒 Keamanan Data Anda</div>
+          <p style="color: #cbd5e1; font-size: 12px; line-height: 1.5; margin: 4px 0 0 0;">
+            Cookie &amp; Token Anda hanya disimpan di browser Anda (LocalStorage) dan dikirim langsung ke server PHP lokal (localhost:8000) tanpa pernah dikirim ke server pihak ketiga mana pun.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== AUDIO MASTERING STUDIO & EQUALIZER MODAL ==================== -->
+  <div id="masteringModal" class="modal-backdrop">
+    <div class="modal-content mastering-modal-card">
+      <div class="mastering-header-bar">
+        <div class="mastering-header-left">
+          <div class="mastering-icon-box">🎛️</div>
+          <div>
+            <h3 class="mastering-title">Audio Mastering Studio &amp; Graphic EQ</h3>
+            <p class="mastering-subtitle">Pro Audio DSP: 10-Band EQ, Analog Tube Warmth, Stereo Widener &amp; Realtime Processing</p>
+          </div>
+        </div>
+        <div class="mastering-header-right">
+          <button id="closeMasteringModalBtn" class="modal-close-btn" onclick="if(window.closeMasteringStudio)window.closeMasteringStudio(event);" title="Tutup Studio (Esc)">✕</button>
+        </div>
+      </div>
+
+      <div class="mastering-body">
+        <!-- Master Control Strip -->
+        <div class="mastering-control-strip">
+          <div class="mastering-power-group">
+            <button id="masteringPowerToggle" class="mastering-power-btn" title="Aktifkan / Bypass Mastering">
+              <span id="masteringPowerLed" class="mastering-power-led"></span>
+              <span id="masteringPowerText">MASTERING: NONAKTIF (BYPASS)</span>
+            </button>
+          </div>
+
+          <div class="mastering-preset-group">
+            <label for="masteringPresetSelect" class="mastering-label">🎵 Pilihan Preset Genre:</label>
+            <div class="preset-select-wrap">
+              <select id="masteringPresetSelect" class="mastering-preset-select">
+                <option value="studio_master">🎚️ Studio Master Pro (Balanced Punch &amp; Air)</option>
+                <option value="pop">🎤 Pop (Bright Vocals &amp; Crisp Highs)</option>
+                <option value="rock">🎸 Rock (Heavy Mid &amp; Punchy Kick)</option>
+                <option value="blues">🎷 Blues (Warm Tube &amp; Smooth Mids)</option>
+                <option value="metal">⚡ Metal (V-Scoop &amp; Aggressive Edge)</option>
+                <option value="jazz">🎹 Jazz (Acoustic Transparency &amp; Air)</option>
+                <option value="ska">🎺 Ska (Fast Punchy Bass &amp; Bouncy Brass)</option>
+                <option value="reggae">🌴 Reggae (Deep Sub-Bass &amp; Mellow Highs)</option>
+                <option value="acoustic">🎻 Acoustic / Ballad (Intimate &amp; Open)</option>
+                <option value="edm">🎧 EDM / Dance (Sub-Bass Pump &amp; Wide Stereo)</option>
+                <option value="bass_boost">🔊 Bass Booster (Maximum Low-End)</option>
+                <option value="flat">⚖️ Flat / Neutral (Bypass EQ)</option>
+                <option value="custom">🛠️ Custom (Setelan Kustom Anda)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mastering-actions-group">
+            <button id="masteringResetBtn" class="btn-mini-studio" title="Kembalikan semua slider EQ ke 0 dB">↺ Reset Flat</button>
+            <button id="masteringSaveCustomBtn" class="btn-mini-studio" style="color: var(--accent-cyan); border-color: rgba(0, 242, 254, 0.4);" title="Simpan pengaturan saat ini ke preset Custom">💾 Simpan Custom</button>
+          </div>
+        </div>
+
+        <!-- 10-Band Graphic Equalizer Faders -->
+        <div class="mastering-eq-section">
+          <div class="eq-section-header">
+            <span>10-BAND GRAPHIC EQUALIZER (-12dB s/d +12dB)</span>
+            <span class="eq-guide-hint">Geser slider untuk kustomisasi frekuensi</span>
+          </div>
+
+          <div class="eq-faders-grid">
+            <!-- Band 1: 32 Hz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_32" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="0" data-freq="32" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">32Hz</span>
+              <span class="eq-type-label">Sub</span>
+            </div>
+            <!-- Band 2: 64 Hz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_64" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="1" data-freq="64" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">64Hz</span>
+              <span class="eq-type-label">Bass</span>
+            </div>
+            <!-- Band 3: 125 Hz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_125" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="2" data-freq="125" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">125Hz</span>
+              <span class="eq-type-label">Punch</span>
+            </div>
+            <!-- Band 4: 250 Hz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_250" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="3" data-freq="250" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">250Hz</span>
+              <span class="eq-type-label">Warmth</span>
+            </div>
+            <!-- Band 5: 500 Hz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_500" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="4" data-freq="500" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">500Hz</span>
+              <span class="eq-type-label">Body</span>
+            </div>
+            <!-- Band 6: 1 kHz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_1000" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="5" data-freq="1000" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">1kHz</span>
+              <span class="eq-type-label">Vocal</span>
+            </div>
+            <!-- Band 7: 2 kHz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_2000" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="6" data-freq="2000" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">2kHz</span>
+              <span class="eq-type-label">Clarity</span>
+            </div>
+            <!-- Band 8: 4 kHz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_4000" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="7" data-freq="4000" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">4kHz</span>
+              <span class="eq-type-label">Edge</span>
+            </div>
+            <!-- Band 9: 8 kHz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_8000" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="8" data-freq="8000" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">8kHz</span>
+              <span class="eq-type-label">Bright</span>
+            </div>
+            <!-- Band 10: 16 kHz -->
+            <div class="eq-fader-col">
+              <span id="eqVal_16000" class="eq-val-label">0dB</span>
+              <div class="eq-slider-track">
+                <input type="range" class="eq-fader-slider" data-band="9" data-freq="16000" min="-12" max="12" step="0.5" value="0">
+              </div>
+              <span class="eq-freq-label">16kHz</span>
+              <span class="eq-type-label">Air</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Analog Character Strip -->
+        <div class="mastering-knobs-grid">
+          <!-- Warmth / Saturation -->
+          <div class="mastering-knob-card">
+            <div class="knob-card-top">
+              <span class="knob-name">🔥 Analog Tube Warmth</span>
+              <span id="masteringWarmthVal" class="knob-val">0%</span>
+            </div>
+            <input type="range" id="masteringWarmthSlider" class="knob-slider" min="0" max="100" step="5" value="0">
+            <p class="knob-desc">Harmonic saturation lembut untuk karakter suara hangat &amp; analog.</p>
+          </div>
+
+          <!-- Stereo Spatial Width -->
+          <div class="mastering-knob-card">
+            <div class="knob-card-top">
+              <span class="knob-name">🌐 Stereo Field Width</span>
+              <span id="masteringWidthVal" class="knob-val">100%</span>
+            </div>
+            <input type="range" id="masteringWidthSlider" class="knob-slider" min="100" max="180" step="5" value="100">
+            <p class="knob-desc">Memperlebar panggung suara stereo instrumen dan vokal latar.</p>
+          </div>
+
+          <!-- Master Gain -->
+          <div class="mastering-knob-card">
+            <div class="knob-card-top">
+              <span class="knob-name">🎚️ Master Output Gain</span>
+              <span id="masteringGainVal" class="knob-val">0.0 dB</span>
+            </div>
+            <input type="range" id="masteringGainSlider" class="knob-slider" min="-6" max="6" step="0.5" value="0">
+            <p class="knob-desc">Pengaturan level output akhir dengan auto brickwall limiter proteksi.</p>
+          </div>
+        </div>
+
+        <!-- Realtime & Download Integration Notice -->
+        <div class="mastering-footer-notice">
+          <div class="notice-icon">⚡</div>
+          <div class="notice-text">
+            <strong>Terintegrasi Penuh:</strong> Ketika status <em>MASTERING: AKTIF</em>, suara yang diputar secara realtime langsung diproses sesuai equalizer &amp; preset ini. Saat Anda mengklik <strong>Download (MP3 320k, WAV 24-Bit, FLAC, M4A, ZIP)</strong>, audio otomatis dirender sesuai hasil mastering ini!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CEK TOTAL & STATISTIK DOWNLOAD ==================== -->
+  <div id="statsModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-box modal-lg stats-modal-box">
+      <div class="stats-modal-header">
+        <div class="stats-modal-title">
+          <span class="stats-title-icon">📊</span>
+          <div>
+            <h3>Statistik &amp; Total Download</h3>
+            <p class="stats-subtitle">Lacak riwayat unduhan per format audio &amp; video berdasarkan periode bulan.</p>
+          </div>
+        </div>
+        <button id="closeStatsModalBtn" class="modal-close-btn" onclick="if(window.closeStatsModal)window.closeStatsModal(event);" title="Tutup">✕</button>
+      </div>
+
+      <div class="modal-body stats-modal-body">
+        <!-- Filter & Control Toolbar -->
+        <div class="stats-toolbar">
+          <div class="stats-toolbar-group">
+            <label for="statsMonthSelect" class="stats-label">📅 Periode Bulan:</label>
+            <select id="statsMonthSelect" class="stats-select" title="Pilih Bulan"></select>
+          </div>
+
+          <div class="stats-toolbar-actions">
+            <span class="stats-auto-sync-indicator" id="statsSyncBadge" title="Terkoneksi">⚡ Terkoneksi</span>
+            <button id="statsRefreshBtn" class="btn-sm btn-ghost" title="Muat ulang data">🔄 Refresh</button>
+            <button id="statsExportCsvBtn" class="btn-sm btn-ghost" title="Ekspor ke format file CSV">📥 Unduh CSV</button>
+            <button id="statsClearBtn" class="btn-sm btn-danger-ghost" title="Hapus riwayat statistik">🗑️ Bersihkan</button>
+          </div>
+        </div>
+
+        <!-- Global Summary Stat Cards -->
+        <div class="stats-cards-grid">
+          <div class="stat-card stat-card-total">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Total Keseluruhan</span>
+              <span class="stat-card-icon">⚡</span>
+            </div>
+            <div id="statTotalAll" class="stat-card-value">0</div>
+            <div class="stat-card-meta">Semua format lagu</div>
+          </div>
+
+          <div class="stat-card stat-card-mp3">
+            <div class="stat-card-header">
+              <span class="stat-card-title">MP3 320k</span>
+              <span class="stat-card-badge badge-mp3">MP3</span>
+            </div>
+            <div id="statTotalMp3" class="stat-card-value">0</div>
+            <div class="stat-card-meta">Format standar HQ</div>
+          </div>
+
+          <div class="stat-card stat-card-wav">
+            <div class="stat-card-header">
+              <span class="stat-card-title">WAV 24-Bit</span>
+              <span class="stat-card-badge badge-wav">WAV</span>
+            </div>
+            <div id="statTotalWav" class="stat-card-value">0</div>
+            <div class="stat-card-meta">Studio Master uncompressed</div>
+          </div>
+
+          <div class="stat-card stat-card-flac">
+            <div class="stat-card-header">
+              <span class="stat-card-title">FLAC Hi-Res</span>
+              <span class="stat-card-badge badge-flac">FLAC</span>
+            </div>
+            <div id="statTotalFlac" class="stat-card-value">0</div>
+            <div class="stat-card-meta">Lossless Audio murni</div>
+          </div>
+
+          <div class="stat-card stat-card-m4a">
+            <div class="stat-card-header">
+              <span class="stat-card-title">M4A &amp; MP4</span>
+              <span class="stat-card-badge badge-other">AAC/MP4</span>
+            </div>
+            <div id="statTotalM4aMp4" class="stat-card-value">0</div>
+            <div class="stat-card-meta">Direct Stream &amp; Video</div>
+          </div>
+
+          <div class="stat-card stat-card-zip">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Paket ZIP</span>
+              <span class="stat-card-badge badge-zip">ZIP</span>
+            </div>
+            <div id="statTotalZip" class="stat-card-value">0</div>
+            <div class="stat-card-meta">Lagu + Lirik + Cover</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PERSISTENT GLOBAL BOTTOM AUDIO PLAYER ==================== -->
+  <aside id="globalBottomPlayer" class="global-bottom-player" style="display: none;">
+    <div class="bottom-player-container">
+      <!-- Left: Track Info & Artwork -->
+      <div class="bottom-player-track">
+        <img id="bpThumb" class="bp-thumb" src="" alt="Thumb" onerror="this.src='https://cdn1.suno.ai/defaultBlue.webp'">
+        <div class="bp-info">
+          <div id="bpTitle" class="bp-title" title="">Memilih lagu...</div>
+          <div id="bpArtist" class="bp-artist">Suno Creator</div>
+        </div>
+      </div>
+
+      <!-- Center: Controls & Seekbar with Audio Spectrum Visualizer -->
+      <div class="bottom-player-center">
+        <!-- Live Audio Spectrum Visualizer Canvas -->
+        <canvas id="bpSpectrumCanvas" class="bp-spectrum-canvas"></canvas>
+
+        <div class="bp-controls-row">
+          <button id="bpShuffleBtn" class="bp-btn bp-btn-icon" title="Acak Lagu (Shuffle)">🔀</button>
+          <button id="bpPrevBtn" class="bp-btn bp-btn-icon" title="Lagu Sebelumnya (Prev)">⏮</button>
+          <button id="bpPlayPauseBtn" class="bp-btn bp-btn-play" title="Putar / Jeda">▶</button>
+          <button id="bpNextBtn" class="bp-btn bp-btn-icon" title="Lagu Berikutnya (Next)">⏭</button>
+          <button id="bpLoopBtn" class="bp-btn bp-btn-icon" title="Ulangi Lagu (Loop)">🔁</button>
+        </div>
+        <div class="bp-timeline-row">
+          <span id="bpCurrentTime" class="bp-time">00:00</span>
+          <div class="bp-seek-wrap">
+            <input type="range" id="bpSeekSlider" class="bp-seek-slider" min="0" max="100" value="0">
+            <div id="bpSeekProgress" class="bp-seek-progress" style="width: 0%;"></div>
+          </div>
+          <span id="bpTotalTime" class="bp-time">00:00</span>
+        </div>
+      </div>
+
+      <!-- Right: Volume & Quick Format Actions -->
+      <div class="bottom-player-right">
+        <div class="bp-volume-box">
+          <button id="bpMuteBtn" class="bp-btn-icon" style="padding: 0; font-size: 15px;" title="Mute / Unmute">🔊</button>
+          <input type="range" id="bpVolumeSlider" class="bp-volume-slider" min="0" max="1" step="0.05" value="0.9" title="Volume">
+        </div>
+        <div class="bp-quick-actions">
+          <button id="bpDlMp3Btn" class="btn-mini-dl" title="Download MP3 320k">MP3</button>
+          <button id="bpDlWavBtn" class="btn-mini-dl" style="color: #c084fc; border-color: rgba(168, 85, 247, 0.4);" title="Download WAV 24-Bit">WAV</button>
+          <button id="bpMasteringBtn" class="btn-mini-dl btn-mastering-indicator" onclick="if(window.openMasteringStudio)window.openMasteringStudio(event);" title="Buka Audio Mastering Studio & Equalizer">🎛️ Mastering <span id="bpMasteringDot" class="mastering-led-dot"></span></button>
+          <button id="bpOpenDetailBtn" class="btn-mini-dl" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);" title="Lihat Detail & Lirik">🔍 Detail</button>
+          <button id="bpCloseBarBtn" class="bp-close-bar-btn" title="Tutup Bilah Pemutar">✕</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Persistent Floating Download Progress Dock -->
+  <div id="downloadProgressDock" class="download-progress-dock" style="display: none;">
+    <div class="dp-dock-header">
+      <div class="dp-dock-title">
+        <span class="dp-pulse-icon">📥</span>
+        <span>Download Manager</span>
+        <span id="dpActiveCountBadge" class="dp-badge-count">1 Proses</span>
+      </div>
+      <button id="dpCloseDockBtn" class="dp-btn-close" title="Tutup Panel Download">✕</button>
+    </div>
+    <div id="dpTasksList" class="dp-tasks-list"></div>
+  </div>
+
+  <!-- Libraries: JSZip and LameJS for Offline / GitHub Pages compatibility -->
+  <script src="libs/jszip.min.js"></script>
+  <script src="libs/lame.min.js"></script>
+  <script src="app.js?v=3.3"></script>
+</body>
+</html>
